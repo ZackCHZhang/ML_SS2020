@@ -1,0 +1,70 @@
+\documentclass{article}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\setlength{\headheight}{35pt}
+\lhead{Machine Learning\\Sommersemester2020\\Exercise 0}
+\chead{}
+% bfseries
+\rhead{Ciheng Zhang(3473188)\\Gang Yu()\\HUibanjun Tian(3471607)}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+\begin{titlepage}
+    \title{\Huge \textbf{Machine Learning\\Sommersemester2020\\Exercise 0} }
+    \author{\LARGE \textsl{Ciheng Zhang (3473188) zch3183505@gmail.com}\\\LARGE \textsl{Gang Yu stxxxxx@stud.uni-stuttgart.de}\\\LARGE \textsl{Huipanjun Tian (3471607)  Thpjpyl5111217@gmail.com} \\[200pt]}
+    \date{\today}
+    \maketitle
+    \thispagestyle{empty}
+\end{titlepage}
+\newpage
+\section{Matrix equations}
+\subsection{ }
+    \[XA+A^T=I\]
+    \[XAA^{-1}+A^TA^{-1}=A^{-1}\]
+    \[X+A^TA^{-1}=A^{-1}\]
+    \[X=A^{-1}-A^TA^{-1}\] 
+\subsection{ }
+\[X^TC=[2A(X+B)]^T\]
+\[X^TC=2(x+B)^TA^T\]
+\[X^TC=2X^TA^T+2B^TA^T\]
+\[x^T(C-2A^T)=2B^TA^T\]
+\[x=(2B^TA^T(C-2A)^{-1})^T\]
+\[X=2 ((C-2A)^{-1}))^TAB\]
+\subsection{ }
+\[(Ax)^{-1}A-y^TA=0_n^T\]
+\[x^TA^TA=y^TA\]
+\[x^T=y^TAA^{-1}(A^T)^{-1}\]
+\[x^T=y^T(A^T)^(-1)\]
+\[x=A^{-1}y\]
+\subsection{ }
+\[(Ax-y)^TA+x^TB=0_n^T\]
+\[(Ax)^TA-y^TA+A^TB=0_n^T\]
+\[x^TA^TA-y^TA=-A^TB\]
+\[x^TA^TA=y^TA-A^TB\]
+\[x^T=Ay^T(A^T)^{-1}-A^TBA^{-1}(A^T)^{-1}\]
+\[x=A^{-1}y-A^T(A^{-1})^TB^TA\]
+\section{Vector derivatives}
+\subsection{ }
+a is a nxn Matrix
+\subsection{ }
+\[\frac{\partial}{\partial x}[x^Tx]=x\]\
+\subsection{ }
+let 
+\[f(x)=(Ax-y)(Ax-y)^T+x^TBx\]
+when we want to cauculate the minimum of f(x),we should at first the derivatives calculation
+\[\frac{df(x)}{dx}=A(Ax-y)+Bx\]
+\[\frac{df(x)}{dx}=A^2x+Bx-Ay\]
+So the minimum values is the time $ f(x)=0 $. And $ A^2 >0$ and B is positive definite. Therefor the minimum of the equations is
+\\\[(A^2+B)x=Ay\]
+\\\[x=Ay(A^2+B)^{-1}\]                                    
+\section{Error Measures}
+\subsection{ }
+\[MSE=\frac{1}{n}\sum_{i=1}^{n}(y_i-\widehat{y})\]
+\[MSE=\frac{1}{n}(y-\widehat{y})(y-\widehat{y})^T\]
+\[MAE=\frac{1}{N}\sum_{i=1}^{n}|y_i-\widehat{y}|=\frac{1}{n}||y-\widehat{y}||_1\]
+\subsection{ }
+MAE is more robust to outliers.MSE calculation is simple. Ao if the outliers is importat for the Problem, people should choose MSE. If the outliers is just wrong data, people should use MAE.
+\subsection{ }
+both y and $ \widehat{y} $ have 2 situation: =0 or =1. So if the true values and predicted values is equal, the both MSE and MAE is equal to 0. if the true values equal to 0 and predicted values equal to 0 the both MSE and MAE is equal to 1 and vice versa. Therefor in this situation MSE and MAE is equal.
+\end{document}
