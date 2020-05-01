@@ -2,7 +2,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 def load_iris_dataset():
     from sklearn import datasets
     iris = datasets.load_iris()
@@ -73,30 +72,39 @@ def train_test_split(X, y):
     return X1[0:l,:], X1[l:len(X),:], y1[0:l], y1[l:y.size]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y)
-# print(X_train)
-# print(y_train)
-
 
 assert (X_train.shape[0] + X_test.shape[0]) == X.shape[0]
 assert (y_train.shape[0] + y_test.shape[0]) == y.shape[0]
 assert X_train.shape[1] == X_test.shape[1]
 
-N_X_train=X_train
-for i in range(0,4):
-    for j in range(len(X_train)):
-        N_X_train[j,i]=(X_train[j,i]-min(X_train[:,i]))/(max(X_train[:,i])-min(X_train[:,i]))
+vmin=X_train.min(axis=0)
+vmax=X_train.max(axis=0)
+print(vmin,vmax)
 
+N_X_train=X_train
 N_X_test=X_test
-for i in range(0,4):
-    for j in range(len(X_test)):
-        N_X_test[j,i]=(X_test[j,i]-min(X_test[:,i]))/(max(X_test[:,i])-min(X_test[:,i]))
+for i in range(4):
+    N_X_train[:,i] = (X_train[:,i] - vmin[i]) / (vmax[i] - vmin[i])
+
+for i in range(4):
+    N_X_test[:,i] = (X_test[:,i] - vmin[i]) / (vmax[i] - vmin[i])
+
+# N_X_train=X_train
+# for i in range(0,4):
+#     for j in range(len(X_train)):
+#         N_X_train[j,i]=(X_train[j,i]-min(X_train[:,i]))/(max(X_train[:,i])-min(X_train[:,i]))
+
+# N_X_test=X_test
+# for i in range(0,4):
+#     for j in range(len(X_test)):
+#         N_X_test[j,i]=(X_test[j,i]-min(X_test[:,i]))/(max(X_test[:,i])-min(X_test[:,i]))
 # print(N_X_train)
 # print(y_train)
-# plt.scatter(N_X_train[:,0],N_X_train[:,2],c=y_train)
-# plt.title('Visualize the variables SL und PL')
-# plt.xlabel('Sepal Length')
-# plt.ylabel('Petal Length')
-# plt.show()
+plt.scatter(N_X_train[:,0],N_X_train[:,2],c=y_train)
+plt.title('Visualize the variables SL und PL')
+plt.xlabel('Sepal Length')
+plt.ylabel('Petal Length')
+plt.show()
 def euclidean_distance(x1, x2):
     """
     Given vectors x1 and x2 with shape (n,) returns distance between vectors as float.
@@ -133,23 +141,20 @@ class KNearestNeighbors(object):
         f0=f0/self.y.size
         f1=f1/self.y.size
         f2=f2/self.y.size
-        # print(self.y)
-        # print(f0)
-        # print(f1)
-        # print(f2)
+
         result=np.zeros(shape=(X.shape[0],2))
         
         for i in range(X.shape[0]):
             array_dist=np.zeros(shape=(self.X.shape[0],2))
             for j in range(self.X.shape[0]):
-                # if self.distance_metric=='distance_metric':
+
                     dis= euclidean_distance(X[i,:],self.X[j,:])
-                    # print(dis)
+
                     array_dist[j,:]=dis,self.y[j]
             array_dist=array_dist[array_dist[:,0].argsort()]
-            # print (array_dist)
+
             array_dist=array_dist[0:self.k]
-            # print(array_dist)
+
             for k in range(len(array_dist)):
                 if array_dist[k,1]==0.0:
                     cnt0+=1
@@ -159,7 +164,7 @@ class KNearestNeighbors(object):
                     cnt2+=1
             result[i,0]=i
             listWeight=[cnt0/f0,cnt1/f1,cnt2/f2]
-            # print (listWeight)
+
             result[i,1]=listWeight.index(max(listWeight))
             cnt0=0
             cnt1=0
@@ -178,10 +183,6 @@ class KNearestNeighbors(object):
 def precision(y_pred, y_true):
     # Implement your solution here.
     a11=a22=a33=0
-    
-    # totalOne_pred=np.sum(y_pred[:,1]==1)
-    # totalTwo_pred=np.sum(y_pred[:,1]==2)
-    # totalThree_pred=np.sum(y_pred[:,1]==3)
 
     totalOne_true=np.sum(y_true[:,1]==0)   
     totalTwo_true=np.sum(y_true[:,1]==1)
@@ -198,7 +199,7 @@ def precision(y_pred, y_true):
     P1=float(a11)/float(totalOne_true)
     P2=float(a22)/float(totalTwo_true)
     P3=float(a33)/float(totalThree_true)
-    return P1,P2,P3
+    return P1,P2,P3,((P1+P2+P3)/3)
 
 def recall(y_pred, y_true):
     # Implement your solution here.
@@ -207,10 +208,6 @@ def recall(y_pred, y_true):
     totalOne_pred=np.sum(y_pred[:,1]==0)
     totalTwo_pred=np.sum(y_pred[:,1]==1)
     totalThree_pred=np.sum(y_pred[:,1]==2)
-
-    # totalOne_true=np.sum(y_true[:,1]==1)   
-    # totalTwo_true=np.sum(y_true[:,1]==2)
-    # totalThree_true=np.sum(y_true[:,1]==3)
 
     for i in range(len(y_pred)):
         if y_pred[i,1]==y_true[i,1]:
@@ -223,8 +220,7 @@ def recall(y_pred, y_true):
     R1=float(a11)/float(totalOne_pred)
     R2=float(a22)/float(totalTwo_pred)
     R3=float(a33)/float(totalThree_pred)
-    print(a22,totalTwo_pred)
-    return R1,R2,R3
+    return R1,R2,R3,((R1+R2+R3)/3)
 
 def f1score(y_pred, y_true):
     # Implement your solution here.
@@ -257,22 +253,54 @@ def f1score(y_pred, y_true):
     F1=2*P1*R1/(P1+R1)
     F2=2*P2*R2/(P2+R2)
     F3=2*P3*R3/(P3+R3)
-    return F1,F2,F3
+    return F1,F2,F3,((F1+F2+F3)/3)
 
-listResult=[]
-knn=KNearestNeighbors(3)
-knn.fit(N_X_train,y_train)
-listResult=knn.predict(N_X_test)
+def acc(y_pred, y_true):
+    cnt=0
+    for i in range(len(y_pred)):
+        if y_pred[i,1]==y_true[i,1]:
+            cnt+=1
+    return float(cnt)/float(len(y_pred)) 
+
 y_true=np.zeros(shape=(X_test.shape[0],2))
 for i in range(y_test.size):
     y_true[i,1]=y_test[i]
     y_true[i,0]=i
-# print(y_test)
-# print(listResult)
-Precision=precision(listResult,y_true)
-Recall=recall(listResult,y_true)
-F1=f1score(listResult,y_true)
 
-print(Precision)
-print(Recall)
-print(F1)
+listResult1=[]
+listResult3=[]
+listResult5=[]
+
+knn3=KNearestNeighbors(3)
+knn5=KNearestNeighbors(5)
+knn1=KNearestNeighbors(1)
+
+knn1.fit(N_X_train,y_train)
+knn3.fit(N_X_train,y_train)
+knn5.fit(N_X_train,y_train)
+
+listResult1=knn1.predict(N_X_test)
+listResult3=knn3.predict(N_X_test)
+listResult5=knn5.predict(N_X_test)
+
+
+Precision1=precision(listResult1,y_true) 
+Precision3=precision(listResult3,y_true)
+Precision5=precision(listResult5,y_true)
+
+Recall1=recall(listResult1,y_true)
+Recall3=recall(listResult3,y_true)
+Recall5=recall(listResult5,y_true)
+
+F11=f1score(listResult1,y_true)
+F13=f1score(listResult3,y_true)
+F15=f1score(listResult5,y_true)
+
+acc1=acc(listResult1,y_true)
+acc3=acc(listResult3,y_true)
+acc5=acc(listResult5,y_true)
+
+print(acc1,acc3,acc5)
+print(Precision1,Precision3,Precision5)
+print(Recall1,Recall3,Recall5)
+print(F11,F13,F15)
