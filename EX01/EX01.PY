@@ -148,7 +148,7 @@ class KNearestNeighbors(object):
             array_dist=np.zeros(shape=(self.X.shape[0],2))
             for j in range(self.X.shape[0]):
 
-                    dis= euclidean_distance(X[i,:],self.X[j,:])
+                    dis= self.distance_metric(X[i,:],self.X[j,:])
 
                     array_dist[j,:]=dis,self.y[j]
             array_dist=array_dist[array_dist[:,0].argsort()]
@@ -271,9 +271,9 @@ listResult1=[]
 listResult3=[]
 listResult5=[]
 
-knn3=KNearestNeighbors(3)
-knn5=KNearestNeighbors(5)
-knn1=KNearestNeighbors(1)
+knn3=KNearestNeighbors(3,distance_metric=euclidean_distance)
+knn5=KNearestNeighbors(5,distance_metric=euclidean_distance)
+knn1=KNearestNeighbors(1,distance_metric=euclidean_distance)
 
 knn1.fit(N_X_train,y_train)
 knn3.fit(N_X_train,y_train)
