@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\usepackage{pst-func}
+\usepackage{mathrsfs}
+\pagestyle{fancy}
+\setlength{\headheight}{35pt}
+\lhead{Machine Learning\\Sommersemester2020\\Exercise 8}
+\chead{}
+% bfseries
+\rhead{Ciheng Zhang(3472321)\\Gang Yu(3488292)\\Huibanjun Tian(3471607)}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+\begin{titlepage}
+    \title{\Huge \textbf{Machine Learning\\Sommersemester2020\\Exercise 8} }
+    \author{\LARGE \textsl{Ciheng Zhang (3472321) zch3183505@gmail.com}\\\LARGE \textsl{Gang Yu(3488292) HansVonCq@gmail.com}\\\LARGE \textsl{Huipanjun Tian (3471607)  Thpjpyl5111217@gmail.com} \\[200pt]}
+    \date{\today}
+    \maketitle
+    \thispagestyle{empty}
+\end{titlepage}
+\newpage
+\def\layersep{2cm}
+\section{Formalizing Neural Networks}
+\begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
+    \tikzstyle{every pin edge}=[<-,shorten <=1pt]
+    \tikzstyle{neuron}=[circle,fill=black!25,minimum size=17pt,inner sep=0pt]
+    \tikzstyle{input neuron}=[neuron, fill=green!50];
+    \tikzstyle{output neuron}=[neuron, fill=red!50];
+    \tikzstyle{hidden neuron}=[neuron, fill=blue!50];
+    \tikzstyle{annot} = [text width=4em, text centered]
+
+    % Draw the input layer nodes
+    \foreach \name / \y in {1,...,12}
+    % This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
+        \node[input neuron, pin=left:Input \#\y] (I-\name) at (0,-\y) {};
+
+    % Draw the hidden layer nodes
+    \foreach \name / \y in {1,...,15}
+        \path[yshift=0.5cm]
+            node[hidden neuron] (H1-\name) at (\layersep,-\y cm) {};
+    % hidden layer 2
+    \foreach \name / \y in {1,...,15}
+        \path[yshift=0.5cm]
+            node[hidden neuron] (H2-\name) at (2*\layersep,-\y cm) {};
+
+
+
+    % Draw the output layer node
+    \foreach \name / \y in {1,2,3}
+            \node[output neuron,pin={[pin edge={->}]right:Output \#\y}, right of=H2-3] (O-\name) at (3*\layersep,-\y) {};
+
+    % Connect every node in the input layer with every node in the
+    % hidden layer.
+    \foreach \source in {1,...,12}
+        \foreach \dest in {1,...,15}
+            \path (I-\source) edge (H1-\dest);
+
+    \foreach \source in {1,...,15}
+        \foreach \dest in {1,...,15}
+            \path (H1-\source) edge (H2-\dest);
+
+
+    % Connect every node in the hidden layer with the output layer
+    \foreach \source in {1,...,15}
+        \foreach \dest in {1,2,3}
+            \path (H2-\source) edge (O-\dest);
+
+    % Annotate the layers
+    \node[annot,above of=H1-1, node distance=1cm] (hl) {Hidden layer 1};
+    \node[annot,left of=hl] {Input layer};
+    \node[annot,right of=hl] (h2) {Hidden layer 2};
+    \node[annot,above of=O-1, node distance=1cm]  {Output layer};
+\end{tikzpicture}
+\[F(x)={W_3}^T\sigma({W_2}^T\sigma({W_1}^Tx+b_1)+b_2)+b_3\]
+Assume the width of hidden layers is 15.  So the $W_1$ is the weight between input layer, and the dimension is $12 * 15$ and the input dimension is $12 *1$. and the bias $b_1$ is $15 *1$.
+Then the matric $W_2$ is the weight between hidden layer1 and hidden layer2. the dimension of $W_2$ is $15*15$.Then the matric $W_3$ is the weight between Hidden layer2 and output layer. The dimension is $15*3$.
+the bias between hidden layer1 and hidden layer2 is $b_2$ and the dimension is $15*1$. The bias between hidden layer2 and output layer is $3*1$
+\\ its a multinouli problem so we choose the Cross Entropy function as loss function:
+\[loss=-\Sigma (z_i-log\Sigma e^{z_j})\]
+Then we want to punish the missclassification for class -1, So we add the weight for this loss function:
+\[loss=-\Sigma (1+\alpha_i) (z_i-log\Sigma e^{z_j})\]
+and for example we let $\alpha=[1,0,0]$. So we can punish the missclassification for class -1.
+\section{Backpropagation by Hand}
+\subsection*{1.}
+\[w_1^{(o)}max(w_{11}^{(h)}*x_1+w_{21}^{(h)}*x_1,0)+w_2^{(o)}max(w_{12}^{(h)}*x_2+w_{22}^{(h)}*x_2,0)=-0.25\]
+\subsection*{2.}
+\[L=(f_w(x)-y)^2=1.5625\]
+\subsection*{3.}
+
+\[\frac{dL}{dw_{11}}=\frac{dL}{df_w(x)}\frac{df_w(x)}{do_1}\frac{do_1}{dg}\frac{dg}{dw_{11}}\]
+\[=2(f_w(x)-y)*w_1^{(o)}*deReLU*x_1=-1.75*1*1*2=-3.5\]
+Then we update the weight:
+\[w_{11}^{h}=w_{11}^{h}-\eta \frac{dL}{dw_{11}}=0.85\]
+\end{document}

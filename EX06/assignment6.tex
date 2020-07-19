@@ -1,0 +1,107 @@
+\documentclass{article}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{xcolor}
+\pagestyle{fancy}
+\setlength{\headheight}{35pt}
+\lhead{Machine Learning\\Sommersemester2020\\Exercise 6}
+\chead{}
+% bfseries
+\rhead{Ciheng Zhang(3473188)\\Gang Yu(3488292)\\Huibanjun Tian(3471607)}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+\begin{titlepage}
+    \title{\Huge \textbf{Machine Learning\\Sommersemester2020\\Exercise 6} }
+    \author{\LARGE \textsl{Ciheng Zhang (3473188) zch3183505@gmail.com}\\\LARGE \textsl{Gang Yu(3488292) HansVonCq@gmail.com}\\\LARGE \textsl{Huipanjun Tian (3471607)  Thpjpyl5111217@gmail.com} \\[200pt]}
+    \date{\today}
+    \maketitle
+    \thispagestyle{empty}
+\end{titlepage}
+\newpage
+\section{Concept}
+1. When the dataset is linear separability, Points can be separated by a line. But there is also possiable, that separated with a very narrow margin.
+\\2. So we use the slack variable to solve the problem, that separated with narrow margin. we also use slack variable solve some dataset,that most Points can be linear separated, but there are also one
+or 2 Points, that make a linear separability problem to linear indivisiable. slack variable make more falut tolerance to the SVM. we use slack variable to figure out the outlier, and let those outlier no contribute to our loss, that can let margin bigger.
+\\3. Besides the linear separability problem. there are also linear indivisiable problem. We use kernel function to solve it. kernel function increase the dimension to make the dataset linear separability in higher dimension.
+\section{Perceptron}
+\subsection{}
+\[y=sign(w^Tx)\]
+\subsection{}
+\[w=[1\quad -1\quad 0.5],wx_1=0.5,y_1=-1\]
+\[w:=w-ax_isign(\hat{f(x_i)}=[1\quad -1\quad -0.1]\]
+\\
+\[wx_2=-1.1,y_2=1\]
+\[wx_2*y_2=-0.5<0\]
+\[w:=[1\quad-1\quad0.5]-0.6[0\quad1\quad1]*(-1)=[1\quad-1.6\quad1.1]\]
+\\
+\[wx_3=-0.1,y_3=1\]
+\[wx_3*y_3<0\]
+\[w:=[1\quad-1.6\quad1.1]-0.6*[1\quad0\quad1]*(-1)=[1.6\quad-1.6\quad1.7]\]
+\\
+\[wx_4=1.7,y_4=1\]
+\[wx_4*y_4>0\]
+\\
+\[wx_1=1.7,y_1=-1\]
+\[wx_1*y_1<0\]
+\[w:=[1.6\quad-1.6\quad1.7]-0.6[0\quad0\quad1]*(1)=[1.6\quad-1.6\quad1.1]\]
+\[wx_1=1.1,y_1=-1\]
+\[wx_1*y_1<0\]
+\[w:=[1.6\quad-1.6\quad1.1]-0.6[0\quad0\quad1]*(1)=[1.6\quad-1.6\quad0.5]\]
+\[w:=[1.6\quad-1.6\quad0.5]-0.6[0\quad0\quad1]*(1)=[1.6\quad-1.6\quad-0.1]\]
+\\
+\[wx_2=-1.7\]
+\[w:=[1.6\quad-1.1\quad0.5]\]
+\\
+\[wx_1=0.5\]
+\[w:=[1.6\quad-1.1\quad-0.1]\]
+\\
+\[wx_2=-1.2\]
+\[w:=[1.6\quad-0.5\quad0.5]\]
+\\
+\[wx_1=0.5\]
+\[w:=[1.6\quad-0.5\quad-0.1]\]
+\\
+\[wx_2=-0.7\]
+\[w:=[1.6\quad0.1\quad0.5]\]
+\\
+\[wx_1=0.5\]
+\[w:=[1.6\quad0.1\quad-0.1]\]
+Then every Points can make $\hat{f}(x_i)y_i<0$
+\[\hat{f}(x_i)=sign(1.6x_1+0.1x_2-0.1)\]
+\subsection{}
+\begin{center}
+    \begin{tikzpicture}
+    \draw[->](-1,0)--(2,0);
+    \draw[->](0,-1)--(0,2);
+    \draw[fill=gray]
+        (0,1) circle (1pt)
+        (1,0) circle (1pt);
+    \draw[fill=red]
+        (1,1) circle (1pt)
+        (0,0) circle (1pt);
+\end{tikzpicture}
+\end{center}
+accroding to the picture, we can konw the XOR problem cannot be represented by a (linear) Perceptron.
+\section{Polynomial Kernel}
+ \[\Phi(x_i)^T\Phi(x_j)=[x_{i1}^2 \quad \sqrt{2}x_{i1}x_{i2} \quad x_{i2}^2] \left[\begin{array}{c}
+     x_{j1}^2\\
+     \sqrt{2}x_{j1}x_{j2}\\
+     x_{j2}^2
+ \end{array}\right]\]
+ \[=(x_{i1}x_{j1})^2+2x_{i1}x_{i2}x_{j1}x_{j2}+(x_{i2}x_{j2})^2\]
+ \[=(x_{i1}x_{j1}+x_{i2}x_{j2})^2\]
+ So we donn't need to calculate the scalar product, and we can use$(x_{i1}x_{j1}+x_{i2}x_{j2})^2$ to instead of it.
+ \section{Gaussian kernel}
+ form slide 69 we got:
+ \[k(x,x')=e^{-\frac{||x-x'||^2}{2\sigma^2}}\]
+ \[=e^{\frac{-1}{2\sigma}}e^{-x^2}e^{-{x'}^2}e^{2xx'}\]
+ Then we use Tayler Expansion:
+ \[=e^{\frac{-1}{2\sigma}}e^{-x^2}e^{-{x'}^2}\Sigma_{i=0}^\infty \frac{(2xx')^i}{i!}\]
+ \[=e^{\frac{-1}{2\sigma}}\Sigma_{i=0}^\infty e^{-x^2}e^{-{x'}^2}\frac{(2xx')^i}{i!}\]
+ \[=e^{\frac{-1}{2\sigma}}\Sigma_{i=0}^\infty e^{-x^2}e^{-{x'}^2} \sqrt{\frac{2^i}{i!}} \sqrt{\frac{2^i}{i!}} x^i x'^i \]
+ \[=\Phi(x)^T\Phi(x)\]
+ \[\Phi(x)=e^{-x^2}*(1+\sqrt{\frac{2}{1!}}x+\sqrt{\frac{2^2}{2!}}x^2+\dots)\]
+ So its infinty dimension.
+\end{document}
